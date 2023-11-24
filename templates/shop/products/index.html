@@ -1,0 +1,37 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% block tittle %}
+Home |  SHOPKART
+{% endblock tittle %}
+{% block content %}
+<section class="bg-light py-4 my-5">
+<div class="container">
+    <div class="row">
+        <h4 class="mb-3"> {{catogory_name}} Product</h4>
+        <hr style="border-color:red">
+    </div>
+            <div class="row">
+                {% for item in products %}
+                    <div class="col-md-4 col-lg-3">
+                        <a href="{% url 'product_details' catogory_name item.name%}">
+                        <div class="card my-3">
+                            <img src="{{ item.product_image.url }}" class="card-img-top" alt="Category">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">{{ item.name }}</h5>
+                                <p class="card-text">
+                                    <span class="float-start old-price"><s>Rs. {{ item.orginal_price }}</s></span> 
+                                    <span class="float-end new-price">Rs. {{ item.selling_price }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+                {% endfor %}
+            </div>
+            
+          
+
+
+</div>
+</section>
+{% endblock content%}

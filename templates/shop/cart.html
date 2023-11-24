@@ -1,0 +1,193 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% block tittle %}
+ProductDetails |  SHOPKART
+{% endblock tittle %}
+
+{% block content %}
+<style>
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+  
+    .table th, .table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+  
+    .table th {
+      background-color: #f8f9fa;
+    }
+  
+    .input-group {
+      margin: 1px;
+    }
+  
+    .input-group-btn {
+      width: 20%;
+    }
+  
+    .input-group .btn {
+      width: 80%;
+    }
+  
+    .btn-success {
+      background-color: #28a745;
+      color: #fff;
+      border-color: #28a745;
+    }
+  
+    .btn-danger {
+      background-color: #dc3545;
+      color: #fff;
+      border-color: #dc3545;
+    }
+  </style>
+<section class="py-5 text-center container" style="margin-top: 20px;"></section>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">No.</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Total Amount</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in cart %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{item.product.name}}</td>
+      <td>{{item.product.selling_price}}</td>
+      <input class="pid" type="hidden" value="{{item.id}}" id="pid">
+      <td>
+        <p class="input-group">
+          <span class="input-group-btn">
+            <button class="btn btn-success btnMinus" type="button" id="btnMinus"><i class="fa fa-minus"></i></button>
+          </span>
+          <input type="text" name="qty" id="txtQty" value="{{item.product_qty}}" class="form-control text-center txtQty">
+          <span class="input-group-btn">
+            <button class="btn btn-success btnPlus" type="button" id="btnPlus"><i class="fa fa-plus"></i></button>
+          </span>
+        </p>
+      </td>
+      <td>{{item.total_price}}</td>
+      <td>
+        <div>
+          <button class="btn btn-danger" id="btnRemove">REMOVE</button>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</section>
+<script>
+  document.addEventListener("DOMContentLoaded", function(event){
+
+                const btnPlusList = document.querySelectorAll(".btnPlus");
+                const btnMinusList = document.querySelectorAll(".btnMinus");
+                const txtQtyList = document.querySelectorAll(".txtQty");
+                const pidList = document.querySelectorAll(".pid");
+                const btnCartList = document.querySelectorAll(".btnCart");
+                const btnRemoveList = document.querySelectorAll(".btnRemove");
+
+                btnPlusList.forEach(function(btnPlus, index){
+                  btnPlus.addEventListener("click", function(){
+                      let qty = parseInt(txtQtyList[index].value, 10);
+                      qty = isNaN(qty) ? 0 : qty;
+          
+                      if (qty < 10) {
+                          qty++;
+                          txtQtyList[index].value = qty;
+                      }
+                      if (qty > 0) {
+                        let postObj = {
+
+                            product_qty: qty,
+                            pid:2,
+                            //pid: pidList[index].value,
+                            
+                        }
+                        fetch("/addtocart/",{
+                          method:'POST',
+                          credentials:'same-origin',
+                          headers:{
+                              'Accept':'application/json',
+                              'X-Requested-With':'XMLHttpRequest',
+                              //'X-CSRFToken':'{{csrf_token}}',
+                              'X-CSRFToken':'{{csrf_token}}',
+                          },
+                          body:JSON.stringify(postObj)
+      
+                      }).then(response => {
+                          return response.json();
+                      }).then(data=>{
+                          //console.log(data);
+                          alert(data['status']);
+                      });
+                  } else {
+                      alert("Please Enter The Quantity")
+                  }
+
+                  });
+              });
+
+              btnMinusList.forEach(function(btnMinus, index){
+                btnMinus.addEventListener("click", function(){
+                    let qty = parseInt(txtQtyList[index].value, 10);
+                    qty = isNaN(qty) ? 0 : qty;
+        
+                    if (qty > 1) {
+                        qty--;
+                        txtQtyList[index].value = qty;
+                    }
+                    
+
+                    
+
+                });
+            });
+
+            btnCartList.forEach(function(btnCart, index){
+              btnCart.addEventListener("click", function(){
+                  let qty = parseInt(txtQtyList[index].value, 10);
+                  qty = isNaN(qty) ? 0 : qty;
+      
+                  if (qty > 0) {
+                      let postObj = {
+                          product_qty: qty,
+                          pid: pidList[index].value,
+                      }
+      
+                      fetch("/addtocart/",{
+                          method:'POST',
+                          credentials:'same-origin',
+                          headers:{
+                              'Accept':'application/json',
+                              'X-Requested-With':'XMLHttpRequest',
+                              'X-CSRFToken':'{{csrf_token}}', // Make sure to replace this with your CSRF token
+                          },
+                          body:JSON.stringify(postObj)
+                      }).then(response => {
+                          return response.json();
+                      }).then(data=>{
+                          alert(data['status']);
+                      });
+                  } else {
+                      alert("Please Enter The Quantity")
+                  }
+              });
+          });
+      
+
+  });
+</script>
+
+{% endblock content%}

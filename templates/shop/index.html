@@ -1,0 +1,30 @@
+{% extends 'layouts/main.html' %}
+{% block tittle %}
+
+Home |  SHOPKART
+{% endblock tittle %}
+{% block content %}
+{% include 'inc/slider.html' %}
+<div class="container" style="margin-top: 10px;">
+    <div class="row">
+        <div class="row">
+            {% for item in trending_product %}
+                <div class="col-md-4 col-lg-3">
+                    <div class="card mb-4" style="border: 1px solid #ccc; border-radius: 10px; transition: transform 0.3s;">
+                        <img src="{{item.product_image.url}}" class="card-img-top" alt="{{item.name}}">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary" style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">{{item.name}}</h5>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="my-2 old-price" style="color: #999; text-decoration: line-through; margin: 0;"><s>{{item.orginal_price}}</s></h6>
+                                <h5 class="my-2 text-info" style="font-size: 1.5rem; font-weight: bold;">₹ {{item.selling_price}}</h5>
+                                <a href="{% url 'product_details' item.catogory.name item.name%}" class="btn btn-primary mt-2" style="background-color: #007bff; border-color: #007bff; font-size: 1rem; font-weight: bold; margin-top: 0.5rem;"><i class="fa fa-shopping-cart"> Buy Now</i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div> 
+    </div>
+</div>
+
+{% endblock content%}
